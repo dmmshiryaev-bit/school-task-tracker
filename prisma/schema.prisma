@@ -1,0 +1,509 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+  directUrl  = env("DATABASE_URL_UNPOOLED")
+}
+
+enum Role {
+  ADMIN
+  TEACHER
+  STUDENT
+  PARENT
+}
+
+enum TaskStatus {
+  BACKLOG
+  TODO
+  IN_PROGRESS
+  REVIEW
+  DONE
+  REWORK
+  CANCELED
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum TaskType {
+  LESSON
+  HOMEWORK
+  EXERCISE
+  TEST
+  EXAM
+  CLASSWORK
+  COMPOSITION
+  SUMMARY
+  ESSAY
+  PROJECT
+  PRESENTATION
+  LAB_WORK
+  PRACTICAL_WORK
+  READING
+  WATCH_VIDEO
+  AUDIO_ANSWER
+  ORAL_ANSWER
+  CREATIVE
+  OTHER
+}
+
+enum AnswerFormat {
+  TEXT
+  FILE
+  LINK
+  AUDIO
+  VIDEO
+  IMAGE
+  ARCHIVE
+  OFFLINE
+  MIXED
+}
+
+enum AttachmentType {
+  MATERIAL
+  ANSWER
+}
+
+enum TopicStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  REVIEW
+  COMPLETED
+}
+
+enum RewardEventType {
+  TASK_COMPLETED
+  HOMEWORK_COMPLETED
+  TASK_COMPLETED_ON_TIME
+  TASK_COMPLETED_WITHOUT_REWORK
+  REFLECTION_SUBMITTED
+  TOPIC_COMPLETED
+  STREAK_ACHIEVED
+  SUBJECT_MILESTONE
+  MANUAL_AWARD
+}
+
+enum RewardItemType {
+  VIRTUAL
+  PARENT_REWARD
+  TEACHER_REWARD
+}
+
+enum RedemptionStatus {
+  REQUESTED
+  APPROVED
+  REJECTED
+  FULFILLED
+}
+
+enum ExternalLessonType {
+  RECORD
+  ONLINE
+}
+
+model User {
+  id                 Int               @id @default(autoincrement())
+  email              String            @unique
+  phone              String?
+  passwordHash       String
+  fullName           String
+  role               Role              @default(STUDENT)
+  isActive           Boolean           @default(true)
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+  lastLoginAt        DateTime?
+  timezone           String            @default("UTC")
+  notificationSettings Json?
+
+  studentProfile           StudentProfile?
+  parentOf                 StudentProfile[]     @relation("StudentParent")
+  comments                 Comment[]
+  activityLogs             ActivityLog[]
+  notifications            Notification[]
+  tasksCreated             Task[]               @relation("TaskCreator")
+  tasksUpdated             Task[]               @relation("TaskUpdater")
+  studentTasks             Task[]               @relation("TaskStudent")
+  attachmentsUploaded      Attachment[]
+  topicProgresses          TopicProgress[]      @relation("TopicStudent")
+  reflections              Reflection[]         @relation("ReflectionStudent")
+  rewardTransactionsStudent RewardTransaction[] @relation("RewardStudent")
+  rewardsCreated           RewardTransaction[]  @relation("RewardCreator")
+  rewardItemsCreated       RewardItem[]
+  redemptionsStudent       RewardRedemption[]   @relation("RedemptionStudent")
+  redemptionsApproved      RewardRedemption[]   @relation("RedemptionApprover")
+  userBadges               UserBadge[]
+  externalLessonsCreated   ExternalLesson[]
+}
+
+model StudentProfile {
+  id           Int      @id @default(autoincrement())
+  userId       Int      @unique
+  user         User     @relation(fields: [userId], references: [id])
+  grade        Int      @default(8)
+  parentUserId Int?
+  parent       User?    @relation("StudentParent", fields: [parentUserId], references: [id])
+  avatar       String?
+  bio          String?
+  createdAt    DateTime @default(now())
+}
+
+model Subject {
+  id                       Int       @id @default(autoincrement())
+  name                     String
+  slug                     String    @unique
+  color                    String    @default("#4F46E5")
+  icon                     String    @default("book")
+  sortOrder                Int       @default(0)
+  isActive                 Boolean   @default(true)
+  showDifficultyAnalytics  Boolean   @default(true)
+  rewardEnabled            Boolean   @default(true)
+  createdAt                DateTime  @default(now())
+  updatedAt                DateTime  @updatedAt
+
+  tasks            Task[]
+  topics           Topic[]
+  reflections      Reflection[]
+  externalLessons  ExternalLesson[]
+}
+
+model Topic {
+  id          Int      @id @default(autoincrement())
+  subjectId   Int
+  subject     Subject  @relation(fields: [subjectId], references: [id])
+  title       String
+  lessonCode  String?
+  description String?
+  sortOrder   Int      @default(0)
+  plannedDate DateTime?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  tasks             Task[]
+  topicProgresses   TopicProgress[]
+  reflections       Reflection[]
+  rewardTransactions RewardTransaction[]
+  externalLessons   ExternalLesson[]
+  userBadges        UserBadge[]
+
+  @@unique([subjectId, title])
+  @@index([subjectId])
+}
+
+model Task {
+  id                 Int        @id @default(autoincrement())
+  studentId          Int
+  student            User       @relation("TaskStudent", fields: [studentId], references: [id])
+  subjectId          Int
+  subject            Subject    @relation(fields: [subjectId], references: [id])
+  topicId            Int?
+  topic              Topic?     @relation(fields: [topicId], references: [id])
+  title              String
+  description        String     @default("")
+  taskType           TaskType   @default(HOMEWORK)
+  status             TaskStatus @default(TODO)
+  priority           Priority   @default(MEDIUM)
+  dueDate            DateTime?
+  dueTime            String?
+  plannedMinutes     Int?
+  actualMinutes      Int?
+  maxPoints          Int?
+  earnedPoints       Int?
+  grade              Int?
+  tags               String[]
+  answerFormat       AnswerFormat?
+  externalLinks      Json?
+  createdById        Int
+  createdBy          User       @relation("TaskCreator", fields: [createdById], references: [id])
+  updatedById        Int
+  updatedBy          User       @relation("TaskUpdater", fields: [updatedById], references: [id])
+  createdAt          DateTime   @default(now())
+  updatedAt          DateTime   @updatedAt
+  completedAt        DateTime?
+  isTemplate         Boolean    @default(false)
+  parentTaskId       Int?
+  parentTask         Task?      @relation("TaskSubtasks", fields: [parentTaskId], references: [id])
+  subtasks           Task[]     @relation("TaskSubtasks")
+  reflectionRequired Boolean    @default(false)
+  rewardAwarded      Boolean    @default(false)
+  onTimeAwarded      Boolean    @default(false)
+  lastReflectionAt   DateTime?
+
+  checklistItems      ChecklistItem[]
+  comments            Comment[]
+  attachments         Attachment[]
+  reflections         Reflection[]
+  rewardTransactions  RewardTransaction[]
+  userBadges          UserBadge[]
+
+  @@index([studentId])
+  @@index([subjectId])
+  @@index([topicId])
+  @@index([status])
+  @@index([dueDate])
+  @@index([createdAt])
+}
+
+model ChecklistItem {
+  id        Int      @id @default(autoincrement())
+  taskId    Int
+  task      Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  text      String
+  isDone    Boolean  @default(false)
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([taskId])
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  taskId    Int
+  task      Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  authorId  Int
+  author    User     @relation(fields: [authorId], references: [id])
+  text      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  isDeleted Boolean  @default(false)
+
+  @@index([taskId])
+  @@index([authorId])
+  @@index([createdAt])
+}
+
+model Attachment {
+  id             Int            @id @default(autoincrement())
+  taskId         Int
+  task           Task           @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  uploadedById   Int
+  uploadedBy     User           @relation(fields: [uploadedById], references: [id])
+  fileName       String
+  originalName   String
+  mimeType       String
+  fileSize       Int
+  storageUrl     String
+  attachmentType AttachmentType @default(ANSWER)
+  createdAt      DateTime       @default(now())
+
+  @@index([taskId])
+  @@index([uploadedById])
+}
+
+model ActivityLog {
+  id         Int       @id @default(autoincrement())
+  actorId    Int
+  actor      User      @relation(fields: [actorId], references: [id])
+  entityType String
+  entityId   Int
+  action     String
+  fieldName  String?
+  oldValue   String?
+  newValue   String?
+  createdAt  DateTime  @default(now())
+
+  @@index([entityType, entityId])
+  @@index([actorId])
+  @@index([createdAt])
+}
+
+model Notification {
+  id           Int       @id @default(autoincrement())
+  userId       Int
+  user         User      @relation(fields: [userId], references: [id])
+  type         String
+  taskId       Int?
+  subjectId    Int?
+  payload      Json?
+  isRead       Boolean   @default(false)
+  readAt       DateTime?
+  createdAt    DateTime  @default(now())
+  sentEmailAt  DateTime?
+
+  @@index([userId])
+  @@index([isRead])
+  @@index([createdAt])
+}
+
+model TopicProgress {
+  id              Int         @id @default(autoincrement())
+  studentId       Int
+  student         User        @relation("TopicStudent", fields: [studentId], references: [id])
+  topicId         Int
+  topic           Topic       @relation(fields: [topicId], references: [id])
+  status          TopicStatus @default(NOT_STARTED)
+  progressPercent Float       @default(0)
+  totalTasks      Int         @default(0)
+  doneTasks       Int         @default(0)
+  startedAt       DateTime?
+  completedAt     DateTime?
+  updatedAt       DateTime    @updatedAt
+
+  @@unique([studentId, topicId])
+  @@index([studentId])
+  @@index([topicId])
+}
+
+model Reflection {
+  id            Int       @id @default(autoincrement())
+  studentId     Int
+  student       User      @relation("ReflectionStudent", fields: [studentId], references: [id])
+  taskId        Int?
+  task          Task?     @relation(fields: [taskId], references: [id])
+  topicId       Int?
+  topic         Topic?    @relation(fields: [topicId], references: [id])
+  subjectId     Int?
+  subject       Subject?  @relation(fields: [subjectId], references: [id])
+  difficulty    Int
+  confidence    Int?
+  mood          String?
+  whatWasEasy   String?
+  whatWasHard   String?
+  whatHelped    String?
+  needHelp      Boolean   @default(false)
+  actualMinutes Int?
+  tags          String[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([studentId])
+  @@index([subjectId])
+  @@index([topicId])
+  @@index([createdAt])
+}
+
+model RewardRule {
+  id            Int             @id @default(autoincrement())
+  code          String          @unique
+  name          String
+  description   String?
+  points        Int
+  eventType     RewardEventType
+  conditionJson Json?
+  limitPerDay   Int?
+  limitPerWeek  Int?
+  isActive      Boolean         @default(true)
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  transactions RewardTransaction[]
+}
+
+model RewardTransaction {
+  id           Int        @id @default(autoincrement())
+  studentId    Int
+  student      User       @relation("RewardStudent", fields: [studentId], references: [id])
+  points       Int
+  balanceAfter Int
+  ruleId       Int?
+  rule         RewardRule? @relation(fields: [ruleId], references: [id])
+  taskId       Int?
+  task         Task?      @relation(fields: [taskId], references: [id])
+  topicId      Int?
+  topic        Topic?     @relation(fields: [topicId], references: [id])
+  reason       String
+  isManual     Boolean    @default(false)
+  createdById  Int?
+  createdBy    User?      @relation("RewardCreator", fields: [createdById], references: [id])
+  createdAt    DateTime   @default(now())
+
+  @@index([studentId])
+  @@index([taskId])
+  @@index([topicId])
+  @@index([createdAt])
+}
+
+model Badge {
+  id            Int       @id @default(autoincrement())
+  code          String    @unique
+  name          String
+  description   String?
+  icon          String    @default("badge")
+  conditionJson Json?
+  isActive      Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+
+  userBadges UserBadge[]
+}
+
+model UserBadge {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  badgeId   Int
+  badge     Badge    @relation(fields: [badgeId], references: [id])
+  taskId    Int?
+  task      Task?    @relation(fields: [taskId], references: [id])
+  topicId   Int?
+  topic     Topic?   @relation(fields: [topicId], references: [id])
+  context   String?
+  earnedAt  DateTime @default(now())
+
+  @@unique([userId, badgeId])
+  @@index([userId])
+  @@index([badgeId])
+}
+
+model RewardItem {
+  id          Int            @id @default(autoincrement())
+  title       String
+  description String?
+  type        RewardItemType
+  costPoints  Int?
+  icon        String?
+  isActive    Boolean        @default(true)
+  createdById Int?
+  createdBy   User?          @relation(fields: [createdById], references: [id])
+  createdAt   DateTime       @default(now())
+
+  redemptions RewardRedemption[]
+}
+
+model RewardRedemption {
+  id           Int             @id @default(autoincrement())
+  studentId    Int
+  student      User            @relation("RedemptionStudent", fields: [studentId], references: [id])
+  rewardItemId Int
+  rewardItem   RewardItem      @relation(fields: [rewardItemId], references: [id])
+  pointsSpent  Int?
+  status       RedemptionStatus @default(REQUESTED)
+  comment      String?
+  approvedById Int?
+  approvedBy   User?           @relation("RedemptionApprover", fields: [approvedById], references: [id])
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+
+  @@index([studentId])
+  @@index([rewardItemId])
+  @@index([status])
+}
+
+model ExternalLesson {
+  id              Int      @id @default(autoincrement())
+  subjectId       Int
+  subject         Subject  @relation(fields: [subjectId], references: [id])
+  topicId         Int?
+  topic           Topic?   @relation(fields: [topicId], references: [id])
+  title           String
+  url             String
+  type            ExternalLessonType @default(RECORD)
+  description     String?
+  durationMinutes Int?
+  source          String?
+  createdById     Int?
+  createdBy       User?    @relation(fields: [createdById], references: [id])
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([subjectId])
+  @@index([topicId])
+  @@index([createdAt])
+}
