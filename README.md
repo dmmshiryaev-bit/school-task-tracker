@@ -89,8 +89,6 @@ npm run seed
 npm run dev
 ```
 
-Откройте [http://localhost:3000](http://localhost:3000) и войдите, например,
-под `student@tracker.ru` / `Student123!`.
 
 ### Переменные окружения
 
