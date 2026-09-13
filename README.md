@@ -1,36 +1,117 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+<div align="center">
 
-## Getting Started
+# 🎓 Учебный трекер задач
 
-First, run the development server:
+**Домашние задания, дедлайны, награды и аналитика — всё в одном месте.**
+
+Трекер задач для школьников: канбан-доска, календарь с дедлайнами, чек-листы,
+система баллов и наград, рефлексия и аналитика по предметам.
+
+</div>
+
+---
+
+## Возможности
+
+- **Канбан-доска** — задачи в статусах «К выполнению», «В работе», «На проверке»,
+  «Выполнено», «Нужно доработать» (drag-and-drop).
+- **Календарь задач** — интерактивный месяц: клик по дню показывает задачи этой даты,
+  подсветка сегодняшнего дня, пересчёт при навигации по месяцам.
+- **Чек-листы** — пошаговое выполнение задания с прогрессом прямо на карточке.
+- **Комментарии** — обсуждение задачи с историей и таймкодами.
+- **Активность и уведомления** — журнал изменений, уведомления о новых задачах
+  и статусах, «отметить все как прочитанные».
+- **Баллы и награды** — начисление за выполнение, уровни прогресса, витрина наград.
+- **Рефлексия** — после выполнения можно отправить рефлексию и получить баллы.
+- **Аналитика** — графики сложности по предметам, динамика за неделю.
+- **Роли** — администратор, учитель, ученик, родитель — с разными правами:
+  учитель создаёт задачи любому ученику, родитель — только своим детям.
+
+## Роли и демо-доступы
+
+Репозиторий содержит готовый сид с тестовыми пользователями:
+
+| Роль      | Email                 | Пароль       |
+| --------- | --------------------- | ------------ |
+| Ученик    | `student@tracker.ru`  | `Student123!`|
+| Учитель   | `teacher@tracker.ru`  | `Teacher123!`|
+| Родитель  | `parent@tracker.ru`   | `Parent123!` |
+| Админ     | `admin@tracker.ru`    | `Admin123!`  |
+
+## Скриншоты
+
+| Главная (дашборд) | Задачи (канбан-доска) |
+|:---:|:---:|
+| ![Главная](img/главная.jpg) | ![Задачи](img/задачи.jpg) |
+
+| Календарь задач | Награды |
+|:---:|:---:|
+| ![Календарь](img/календарь.jpg) | ![Награды](img/награды.jpg) |
+
+| Аналитика |
+|:---:|
+| ![Аналитика](img/аналитика.jpg) |
+
+## Технологии
+
+| Слой       | Стек                                                                                              |
+| ---------- | ------------------------------------------------------------------------------------------------- |
+| Фронтенд   | [Next.js](https://nextjs.org) 16, [React](https://react.dev) 19, [Tailwind CSS](https://tailwindcss.com) v4 |
+| UI         | shadcn/ui, lucide-react, recharts, tw-animate-css                                                |
+| Бэкенд     | Next.js Route Handlers (App Router)                                                               |
+| База данных| [PostgreSQL](https://www.postgresql.org) (Neon), [Prisma](https://www.prisma.io) ORM               |
+| Язык       | TypeScript                                                                                        |
+
+## Быстрый старт
+
+Требования: **Node.js 20+** и доступ к PostgreSQL (например, [Neon](https://neon.tech)).
 
 ```bash
+# 1. Установка зависимостей
+npm install
+
+# 2. Настройка окружения
+cp .env.example .env
+# заполните DATABASE_URL и DATABASE_URL_UNPOOLED (см. ниже)
+
+# 3. Создание схемы БД
+npx prisma db push
+
+# 4. Наполнение тестовыми данными (учётные записи, предметы, задачи)
+npm run seed
+
+# 5. Запуск в режиме разработки
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Откройте [http://localhost:3000](http://localhost:3000) и войдите, например,
+под `student@tracker.ru` / `Student123!`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Переменные окружения
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Переменная              | Назначение                                              |
+| ----------------------- | ------------------------------------------------------- |
+| `DATABASE_URL`          | Подключение (пулинг) для приложения                     |
+| `DATABASE_URL_UNPOOLED` | Прямое подключение (для миграций / Prisma CLI)          |
 
-## Learn More
+> ⚠️ `npm run seed` очищает базу перед наполнением — используйте на тестовой БД.
 
-To learn more about Next.js, take a look at the following resources:
+## Структура проекта
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
+app/         — страницы и API-роуты (App Router)
+  api/       — серверные route handlers
+  tasks/     — канбан-доска и страница задачи
+  calendar/  — календарь задач
+  rewards/   — баллы и награды
+  analytics/ — аналитика по предметам
+components/  — клиентские компоненты (доска, календарь, модалки, графики)
+lib/         — призмы, утилиты, уведомления
+prisma/      — схема БД и сид
+public/      — статика
+img/         — скриншоты для README
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Лицензия
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Проект распространяется в учебных целях.
