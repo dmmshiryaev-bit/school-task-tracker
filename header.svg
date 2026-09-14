@@ -1,0 +1,97 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 150" width="940" height="150">
+  <defs>
+    <filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="3.5" result="blur"/>
+      <feGaussianBlur stdDeviation="8" result="blur2"/>
+      <feMerge>
+        <feMergeNode in="blur2"/>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <style>
+    @keyframes appear {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    @keyframes colorShift {
+        0% { fill: #b6ff6e; }
+        33% { fill: #3ddc84; }
+        66% { fill: #00d4aa; }
+        100% { fill: #b6ff6e; }
+    }
+    .letter {
+        font-family: Arial, sans-serif;
+        font-weight: 900;
+        opacity: 0;
+        transform-box: fill-box;
+        transform-origin: center;
+        animation:
+          appear 0.25s ease forwards,
+          colorShift 7.0s linear infinite,
+          dna 2.6s ease-in-out infinite;
+    }
+    .sub {
+        font-family: Arial, sans-serif;
+        font-weight: 700;
+        opacity: 0;
+        animation: appear 0.25s ease forwards;
+    }
+
+  @keyframes dna {
+    0%   { transform: translateY(0px) scale(1); }
+    40%  { transform: translateY(-7px) scale(1.14); }
+    70%  { transform: translateY(4px) scale(0.96); }
+    100% { transform: translateY(0px) scale(1); }
+  }
+    </style>
+  </defs>
+  <rect width="940" height="150" fill="#0a0a14"/>
+  <ellipse cx="470" cy="75" rx="480" ry="23" fill="rgba(61, 220, 132,0.10)" />
+    <text class="letter" x="230.0" y="75" font-size="46" filter="url(#glow)" style="animation-delay: 0.00s, 0.00s, 0.00s;">У</text>
+    <text class="letter" x="263.0" y="75" font-size="46" filter="url(#glow)" style="animation-delay: 0.06s, 0.06s, 0.06s;">Ч</text>
+    <text class="letter" x="299.0" y="75" font-size="46" filter="url(#glow)" style="animation-delay: 0.12s, 0.12s, 0.12s;">Е</text>
+    <text class="letter" x="334.0" y="75" font-size="46" filter="url(#glow)" style="animation-delay: 0.18s, 0.18s, 0.18s;">Б</text>
+    <text class="letter" x="371.0" y="75" font-size="46" filter="url(#glow)" style="animation-delay: 0.24s, 0.24s, 0.24s;">Н</text>
+    <text class="letter" x="407.0" y="75" font-size="46" filter="url(#glow)" style="animation-delay: 0.30s, 0.30s, 0.30s;">Ы</text>
+    <text class="letter" x="456.0" y="75" font-size="46" filter="url(#glow)" style="animation-delay: 0.36s, 0.36s, 0.36s;">Й</text>
+    <text class="letter" x="492.0" y="75" font-size="46" filter="url(#glow)" style="animation-delay: 0.42s, 0.42s, 0.42s;"> </text>
+    <text class="letter" x="509.0" y="75" font-size="46" filter="url(#glow)" style="animation-delay: 0.48s, 0.48s, 0.48s;">Т</text>
+    <text class="letter" x="542.0" y="75" font-size="46" filter="url(#glow)" style="animation-delay: 0.54s, 0.54s, 0.54s;">Р</text>
+    <text class="letter" x="577.0" y="75" font-size="46" filter="url(#glow)" style="animation-delay: 0.60s, 0.60s, 0.60s;">Е</text>
+    <text class="letter" x="612.0" y="75" font-size="46" filter="url(#glow)" style="animation-delay: 0.66s, 0.66s, 0.66s;">К</text>
+    <text class="letter" x="644.0" y="75" font-size="46" filter="url(#glow)" style="animation-delay: 0.72s, 0.72s, 0.72s;">Е</text>
+    <text class="letter" x="679.0" y="75" font-size="46" filter="url(#glow)" style="animation-delay: 0.78s, 0.78s, 0.78s;">Р</text>
+    <text class="sub" x="229.0" y="118" font-size="20" fill="#b6ff6e" style="animation-delay: 1.10s;">д</text>
+    <text class="sub" x="244.0" y="118" font-size="20" fill="#b3fe6f" style="animation-delay: 1.15s;">о</text>
+    <text class="sub" x="258.0" y="118" font-size="20" fill="#affd6f" style="animation-delay: 1.19s;">м</text>
+    <text class="sub" x="275.0" y="118" font-size="20" fill="#acfc70" style="animation-delay: 1.24s;">а</text>
+    <text class="sub" x="288.0" y="118" font-size="20" fill="#a8fb71" style="animation-delay: 1.28s;">ш</text>
+    <text class="sub" x="307.0" y="118" font-size="20" fill="#a5fa71" style="animation-delay: 1.33s;">н</text>
+    <text class="sub" x="321.0" y="118" font-size="20" fill="#a1f972" style="animation-delay: 1.37s;">и</text>
+    <text class="sub" x="335.0" y="118" font-size="20" fill="#9ef872" style="animation-delay: 1.42s;">е</text>
+    <text class="sub" x="356.0" y="118" font-size="20" fill="#97f674" style="animation-delay: 1.51s;">з</text>
+    <text class="sub" x="368.0" y="118" font-size="20" fill="#93f574" style="animation-delay: 1.55s;">а</text>
+    <text class="sub" x="381.0" y="118" font-size="20" fill="#90f475" style="animation-delay: 1.60s;">д</text>
+    <text class="sub" x="396.0" y="118" font-size="20" fill="#8df376" style="animation-delay: 1.64s;">а</text>
+    <text class="sub" x="409.0" y="118" font-size="20" fill="#89f276" style="animation-delay: 1.69s;">н</text>
+    <text class="sub" x="423.0" y="118" font-size="20" fill="#86f177" style="animation-delay: 1.73s;">и</text>
+    <text class="sub" x="437.0" y="118" font-size="20" fill="#82f077" style="animation-delay: 1.77s;">я</text>
+    <text class="sub" x="451.0" y="118" font-size="20" fill="#7fef78" style="animation-delay: 1.82s;">,</text>
+    <text class="sub" x="467.0" y="118" font-size="20" fill="#78ed79" style="animation-delay: 1.91s;">д</text>
+    <text class="sub" x="482.0" y="118" font-size="20" fill="#74ec7a" style="animation-delay: 1.96s;">е</text>
+    <text class="sub" x="495.0" y="118" font-size="20" fill="#71eb7b" style="animation-delay: 2.00s;">д</text>
+    <text class="sub" x="510.0" y="118" font-size="20" fill="#6dea7b" style="animation-delay: 2.04s;">л</text>
+    <text class="sub" x="525.0" y="118" font-size="20" fill="#6ae97c" style="animation-delay: 2.09s;">а</text>
+    <text class="sub" x="538.0" y="118" font-size="20" fill="#66e87c" style="animation-delay: 2.13s;">й</text>
+    <text class="sub" x="552.0" y="118" font-size="20" fill="#63e77d" style="animation-delay: 2.18s;">н</text>
+    <text class="sub" x="566.0" y="118" font-size="20" fill="#60e67e" style="animation-delay: 2.23s;">ы</text>
+    <text class="sub" x="593.0" y="118" font-size="20" fill="#59e47f" style="animation-delay: 2.31s;">и</text>
+    <text class="sub" x="615.0" y="118" font-size="20" fill="#52e280" style="animation-delay: 2.41s;">н</text>
+    <text class="sub" x="629.0" y="118" font-size="20" fill="#4ee181" style="animation-delay: 2.45s;">а</text>
+    <text class="sub" x="642.0" y="118" font-size="20" fill="#4be081" style="animation-delay: 2.50s;">г</text>
+    <text class="sub" x="652.0" y="118" font-size="20" fill="#47df82" style="animation-delay: 2.54s;">р</text>
+    <text class="sub" x="666.0" y="118" font-size="20" fill="#44de83" style="animation-delay: 2.58s;">а</text>
+    <text class="sub" x="679.0" y="118" font-size="20" fill="#40dd83" style="animation-delay: 2.63s;">д</text>
+    <text class="sub" x="694.0" y="118" font-size="20" fill="#3ddc84" style="animation-delay: 2.67s;">ы</text>
+</svg>

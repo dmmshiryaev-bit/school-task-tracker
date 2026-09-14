@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="header.svg" alt="Учебный трекер задач" />
+</p>
+
 <div align="center">
 
 # 🎓 Учебный трекер задач
